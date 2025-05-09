@@ -30,10 +30,10 @@ class Car:
    def __init__(self, x, y,ind = (0,0,0)):
       self.des_x = None # координата x точки назначения
       self.des_y = None # координата y точки назначения
-      self.image = pyglet.image.load('sourse/car2.png') # загрузка изображения
+      self.image = pyglet.image.load('sourse/car.png') # загрузка изображения
       self.image.anchor_x = self.image.width // 2 # добавление якоря
       self.image.anchor_y = self.image.height // 2 # добавление якоря
-      self.objc = pyglet.sprite.Sprite(self.image, x=x, y=y, batch=bat, group=middle_group) # создание объекта типа Sprite
+      self.objc = pyglet.sprite.Sprite(self.image, x=x, y=y, batch=bat, group=foreground_group) # создание объекта типа Sprite
       self.path = (self.des_x, self.des_y) # точка назначения
       self.id = ind
       self.pathless = 0
@@ -150,6 +150,45 @@ class DesInput:
       self.rect.color = (180, 180, 255) if active else (220, 220, 220)
 # класс для полей ввода
 
+
+class Point:
+   def __init__(self,x,y,batch,name):
+      self.model = pyglet.shapes.Circle(x,y,30,None, color=(77, 62, 215),batch=batch, group=middle_group)
+      self.x = x
+      self.y = y
+      self.name = name
+
+points_list = []
+
+def create_point():
+   global points_list
+   point_x = 0
+   point_y = 0
+   point_name = ""
+
+   for inp in inputs:
+      if inp.ident == "point_x":
+         point_x = int(inp.text)
+      elif inp.ident == "point_y":
+         point_y = int(inp.text)
+      elif inp.ident == "point_name":
+         point_name = inp.text
+
+   points_list.append(Point(point_x,point_y,bat,point_name))
+
+def delete_point():
+   point_name = ""
+   for inp in inputs:
+      if inp.ident == "point_name_delete":
+         point_name = inp.text
+   for point in points_list:
+      if point.name == point_name:
+         point.model.delete()
+         points_list.remove(point)
+
+
+point_test = Point(100, 100, bat, "point_test")
+
 inputs = [
 DesInput(1100, 650, 90, 40, bat, '1x'),
 DesInput(1210, 650, 90, 40, bat, '1y'),
@@ -157,13 +196,22 @@ DesInput(1150, 600, 90, 40, bat, 'speed1'),
 
 DesInput(1100, 350, 90, 40, bat, '2x'),
 DesInput(1210, 350, 90, 40, bat, '2y'),
-DesInput(1150, 300, 90, 40, bat, 'speed2')
+DesInput(1150, 300, 90, 40, bat, 'speed2'),
+
+DesInput(1350,550,90,40,bat,'point_x'),
+DesInput(1460,550,90,40,bat,'point_y'),
+DesInput(1400,500,90,40,bat,'point_name'),
+
+DesInput(1400,350,90,40,bat,'point_name_delete')
+
 ]
 # набор полей ввода
 
 buttons = [
-    Button(1100, 700, 200, 50, (70, 70, 220), "Машина 1", lambda: car1.init(), bat),
-    Button(1100, 400, 200, 50, (220, 70, 70), "Машина 2", lambda: car2.init(), bat)
+   Button(1100, 700, 200, 50, (70, 70, 220), "Машина 1", lambda: car1.init(), bat),
+   Button(1100, 400, 200, 50, (220, 70, 70), "Машина 2", lambda: car2.init(), bat),
+   Button(1350,600,200, 50, (100, 170, 70), "Создать пункт", lambda : create_point(), bat),
+   Button(1350,400,200, 50, (100, 170, 70), "Удалить пункт", lambda: delete_point(), bat)
 ]
 # набор кнопок
 
