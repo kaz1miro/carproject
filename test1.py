@@ -252,4 +252,5 @@ def on_mouse_press(x, y, button, modifiers):
 
 FPS = 60
 
+
 pyglet.app.run()
